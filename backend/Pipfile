@@ -5,6 +5,8 @@ name = "pypi"
 
 [packages]
 beautifulsoup4 = "*"
+flask = "*"
+flask-cors = "*"
 
 [dev-packages]
 
