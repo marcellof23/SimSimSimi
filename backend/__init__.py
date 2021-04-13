@@ -49,15 +49,19 @@ def create_app(test_config=None):
     @app.route('/view', methods=['GET'])
     def view():
         with sqlite3.connect(db_path) as db:
+            db.row_factory = sqlite3.Row
             cur = db.cursor()
             cur.execute("select * from user")
             rows = cur.fetchall()
-        response = dict()
-        i = 1
+        res = []
         for row in rows:
-            response[f'{i}'] = row
-            i += 1
-        return json.dumps(response)
+            response = {}
+            response["id"] = row["id"]
+            response["text"] = row["text"]
+            response["day"] = row["days"]
+            response["reminder"] = row["reminder"]
+            res.append(response)
+        return json.dumps(res)
 
     db.init_app(app)
 
