@@ -10,8 +10,10 @@ def get_db():
         g.db = sqlite3.connect(
             current_app.config["DATABASE"], detect_types=sqlite3.PARSE_DECLTYPES
         )
-        g.db.row_factory = sqlite3.Row
 
+    else:
+        g.db = sqlite3.connect("tes.db")
+    g.db.row_factory = sqlite3.Row
     return g.db
 
 
@@ -32,7 +34,6 @@ def init_db():
 @click.command('init-db')
 @with_appcontext
 def init_db_command():
-    """Clear the existing data and create new tables."""
     init_db()
     click.echo('Initialized the database.')
 
