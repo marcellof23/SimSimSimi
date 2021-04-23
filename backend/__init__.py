@@ -20,6 +20,12 @@ def create_app(test_config=None):
         DATABASE=os.path.join(app.instance_path, 'tes.sqlite'),
     )
 
+    with sqlite3.connect(db_path) as data:
+        data.row_factory = sqlite3.Row
+        cur = data.cursor()
+        cur.execute("select * from user")
+        rows = cur.fetchall()
+
     if test_config is None:
         app.config.from_pyfile('config.py', silent=True)
     else:
@@ -48,11 +54,6 @@ def create_app(test_config=None):
 
     @app.route('/view', methods=['GET'])
     def view():
-        with sqlite3.connect(db_path) as db:
-            db.row_factory = sqlite3.Row
-            cur = db.cursor()
-            cur.execute("select * from user")
-            rows = cur.fetchall()
         res = []
         for row in rows:
             response = {}
