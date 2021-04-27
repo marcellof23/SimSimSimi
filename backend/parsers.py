@@ -28,7 +28,7 @@ def regex_cleaning(string_kotor):
 	#Ubah jadi Lowercase
 	string_bersih = string_bersih.lower()
 	#Hilangkan punctuations
-	string_bersih = re.sub(r'[%s]' % re.escape(string.punctuation), ' ', string_bersih)
+	string_bersih = re.sub(r'[%s]' % re.escape(string_bersih.punctuation), ' ', string_bersih)
 	#Lowercase numbers
 	string_bersih = re.sub(r'[0-9]', '', string_bersih)
 	#Hilangkan double space
@@ -71,7 +71,7 @@ def list_to_string(list_of_words):
 	'''
 	ret = ''
 	for word in list_of_words:
-		ret.append(word + ' ')
+		ret = ret + (word + ' ')
 	if len(ret) > 0:
 		ret = ret[:-1]
 	return ret
