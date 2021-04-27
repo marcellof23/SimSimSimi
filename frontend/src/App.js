@@ -35,6 +35,9 @@ const App = () => {
       />
     );
     setMessages(newMessages);
+    await fetch('/views').then(res => res.json()).then(data => {
+      console.log(data);
+    });
   };
 
   return (
