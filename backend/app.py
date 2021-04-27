@@ -34,6 +34,7 @@ def user_profile():
     todos = users.find({}, {'_id': False})
     return json.dumps([todo for todo in todos])
 
+
 @app.route("/api", methods=["GET"])
 def test_hello():
     return "<h1>Distant Reading Archive</h1><p>This site is a prototype for testing API .</p>"
