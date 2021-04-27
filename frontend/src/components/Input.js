@@ -20,7 +20,7 @@ export default function Input({ onSend }) {
           type="text"
           onChange={handleInputChange}
           value={text}
-          placeholder="Enter your message here"
+          placeholder="Input your message here..."
         />
         <button>
           <svg

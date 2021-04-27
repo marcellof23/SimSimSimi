@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-export default function BotSide({ fetchMessage }) {
+export default function BotMessage({ fetchMessage }) {
   const [isLoading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
 

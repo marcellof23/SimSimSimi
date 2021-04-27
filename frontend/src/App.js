@@ -5,6 +5,7 @@ import Messages from "./components/Messages";
 import Input from "./components/Input";
 import Header from "./components/Header";
 import "./style.css";
+import "./chatbot.scss"
 import API from "./API";
 import {BrowserRouter as Router, Route} from 'react-router-dom'
 const App = () => {
