@@ -1,4 +1,7 @@
 import re
+import json
+import string
+import nltk
 from nltk.corpus import stopwords
 from nltk.tokenize import sent_tokenize, word_tokenize
 from nltk.stem import PorterStemmer
@@ -11,20 +14,10 @@ regex_tanggal = "([0-9]{2}[/-][0-9]{2}[/-][0-9]{4})|([0-9]{2}\s*(Januari|Februar
 regex_jenis_task = "([Tt]ubes|[Tt]ucil|[Tt]ugas|[Pp]raktikum|[Uu]jian|[Kk]uis)"
 regex_topik = "^[A-Z]"
 
-test_candidates = [
-	{
-		"id": 1,
-		"keywords": [],
-		"params": {
-			"jenis_task": regex_jenis_task,
-			"kode_matkul": regex_kode_matkul,
-			"tanggal": regex_tanggal,
-			"topik": regex_topik
-		}
-	}
-]
+fopen = open('database/dictionary.json')
+test_candidates = json.load(fopen)
 
-def RegexCleaning(string_kotor):
+def regex_cleaning(string_kotor):
 	'''
 	membersihkan string_kotor dengan regex
 	'''
