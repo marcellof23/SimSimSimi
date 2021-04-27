@@ -49,7 +49,7 @@
 
 # 	deskripsi argumen
 # 	-- args:
-# 	dict yang isinya bisa {id task, tanggal baru tanggal}
+# 	dict yang isinya bisa {id task, tanggal baru}
 # 	id task sesuai tampilan fitur 2
 # 	'''
 

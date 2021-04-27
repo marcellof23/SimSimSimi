@@ -3,6 +3,8 @@ import nltk
 from nltk.corpus import stopwords
 from nltk.tokenize import sent_tokenize, word_tokenize
 from nltk.stem import PorterStemmer
+import string
+
 print(nltk)
 regex_kode_matkul = "[A-Z]{2}[0-9]{4}"
 regex_tanggal = "([0-9]{2}[/-][0-9]{2}[/-][0-9]{4})|([0-9]{2}\s*(Januari|Februari|Maret|April|Mei|Juni|Juli|Agustus|September|Oktober|November|Desember)\s*[0-9{4}])"
@@ -33,7 +35,7 @@ def RegexCleaning(string_kotor):
 	#Ubah jadi Lowercase
 	string_bersih = string_bersih.lower()
 	#Hilangkan punctuations
-	string_bersih = re.sub(r'[%s]' % re.escape(string_bersih.punctuation), ' ', string_bersih)
+	string_bersih = re.sub(r'[%s]' % re.escape(string.punctuation), ' ', string_bersih)
 	#Lowercase numbers
 	string_bersih = re.sub(r'[0-9]', '', string_bersih)
 	#Hilangkan double space

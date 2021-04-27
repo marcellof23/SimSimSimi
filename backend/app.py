@@ -62,7 +62,7 @@ def get_current_time():
 @app.route('/api/data', methods=['GET', 'POST'])
 def HandleTasks():
 	query = request.form['user_input']
-	res = resolve_feature(Database.dictionary, query)
+	res = resolve_feature(Dict[0]['dictionary'], query)
 	mydict = {}
 	print(res)
 	if (res['id'] == 1):
@@ -74,17 +74,23 @@ def HandleTasks():
 			ans = sorted(result, key = lambda i: i['id'],reverse=True)
 			jumlah = ans[0]['id'] + 1
 		mydict['id'] = jumlah
-		mydict['Task'] = query
+		mydict['jenis_task'] = res['args']['jenis_task']
+		mydict['kode_matkul'] = res['args']['kode_matkul']
+		mydict['tanggal'] = res['args']['tanggal']
+		mydict['topik'] = res['args']['topik']
 		users.insert_one(mydict)
 		return Response(status=201)
 	elif(res['id'] == 2):
 		tasks = users.find({}, {'_id': False})
 		return json.dumps([task for task in tasks])
 	elif(res['id'] == 3):
-		return json.dumps(res['args'])
+		tanggal_deadline = users.find_one({"jenis_task" : res['args']['jenis_task'], "kode_matkul" : res['args']['kode_matkul']})
+		return json.dumps(tanggal_deadline['tanggal'])
 	elif(res['id'] == 4):
-		lama = users.find_one({"id" : res['args']['id']})
-		users.update_one(res['args']['id'], res['args']['tanggal'])
+		lama = users.find_one({"id" : res['args']['id_task']})
+		baru = lama
+		baru['tanggal'] = res['args']['tanggal']
+		users.update_one(lama, baru)
 		idTask = users.find(res['args'])
 	elif(res['id'] == 5):
 		items = res['args']['id_task']
