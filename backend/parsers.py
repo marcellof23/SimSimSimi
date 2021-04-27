@@ -2,6 +2,9 @@ import re
 from nltk.corpus import stopwords
 from nltk.tokenize import sent_tokenize, word_tokenize
 from nltk.stem import PorterStemmer
+from datetime import datetime as dt
+
+DATE_FORMAT = '%d/%m/%Y'
 
 regex_kode_matkul = "[A-Z]{2}[0-9]{4}"
 regex_tanggal = "([0-9]{2}[/-][0-9]{2}[/-][0-9]{4})|([0-9]{2}\s*(Januari|Februari|Maret|April|Mei|Juni|Juli|Agustus|September|Oktober|November|Desember)\s*[0-9{4}])"
@@ -182,7 +185,7 @@ def resolve_feature(list_of_candidates, user_input):
 	candidate_scores.sort(reverse=True)
 	chosen_candidate_idx = candidate_scores[0][1]
 	chosen_candidate_params = list_of_candidates[chosen_candidate_idx]["params"]
-	chosen_candidate_feature_id = list_of_candidates[chosen_candidate_params]["id"]
+	chosen_candidate_feature_id = list_of_candidates[chosen_candidate_idx]["id"]
 
 	# cari argumen-argumen untuk fitur
 	args = {}
@@ -207,7 +210,21 @@ def resolve_feature(list_of_candidates, user_input):
 			# semoga udah jadi topik task
 			args[param] = topik
 
-		else:
+		elif param == "tanggal_awal":
+			# handle tanggal awal
+			# hapus tanggal_awal dari input
 			args[param] = re.findall(chosen_candidate_params[param], user_input)[0]
+			user_input = re.sub(chosen_candidate_params[param], '', user_input, 1)
 
+		else:
+			regex_res = re.findall(chosen_candidate_params[param], user_input)
+			if len(regex_res) > 0:
+				if param == 'n_hari' or param == 'n_minggu' or param == 'id_task':
+					args[param] = int(re.findall('[0-9]*', regex_res[0])[0])
+				else:
+					args[param] = regex_res[0]
+
+	if "tanggal_awal" in args and "tanggal_akhir" in args:
+		if dt.strptime(args["tanggal_awal"]) > dt.strptime(args["tanggal_akhir"]):
+			swap(args["tanggal_awal"], args["tanggal_awal"])
 	return {"id": chosen_candidate_feature_id, "args": args}
