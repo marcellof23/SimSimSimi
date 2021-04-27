@@ -91,7 +91,6 @@ def HandleTasks():
 		baru = lama
 		baru['tanggal'] = res['args']['tanggal']
 		users.update_one(lama, baru)
-		idTask = users.find(res['args'])
 	elif(res['id'] == 5):
 		items = res['args']['id_task']
 		myquery = {'id' : items} 
