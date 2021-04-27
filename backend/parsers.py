@@ -1,5 +1,4 @@
 import re
-
 regex_kode_matkul = "[A-Z]{2}[0-9]{4}"
 regex_tanggal = "([0-9]{2}[/-][0-9]{2}[/-][0-9]{4})|([0-9]{2}\s*(Januari|Februari|Maret|April|Mei|Juni|Juli|Agustus|September|Oktober|November|Desember)\s*[0-9{4}])"
 regex_jenis_task = "([Tt]ubes|[Tt]ucil|[Tt]ugas|[Pp]raktikum|[Uu]jian|[Kk]uis)"
@@ -112,7 +111,7 @@ def resolve_feature(list_of_candidates, user_input):
 	candidate_scores.sort(reverse=True)
 	chosen_candidate_idx = candidate_scores[0][1]
 	chosen_candidate_params = list_of_candidates[chosen_candidate_idx]["params"]
-	chosen_candidate_feature_id = list_of_candidates[chosen_candidate_params]["id"]
+	chosen_candidate_feature_id = list_of_candidates[chosen_candidate_idx]["id"]
 
 	# cari argumen-argumen untuk fitur
 	args = []
