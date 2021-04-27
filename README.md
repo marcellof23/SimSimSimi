@@ -13,13 +13,13 @@ Sebelum coding/run, jalankan pipenv shell di folder SimSimSimi.
     
 3. Back-End : 
 <ul>
-  <li> refer ke folder backend, lalu ketik command python app.py.
+  <li>refer ke folder backend,  Sebelumnya selalu pipenv install dulu, lalu ketik command python app.py.
   </li>
 </ul>
 
 4. Back-End - Alternative :
 <ul>
-  <li>refer ke folder SimSimSimi, lalu ketik command run.
+  <li>refer ke folder SimSimSimi,  Sebelumnya selalu pipenv install dulu, lalu ketik command run.
   </li>
 </ul>
 

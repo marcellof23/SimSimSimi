@@ -4,9 +4,13 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-beautifulsoup4 = "*"
 flask = "*"
 flask-cors = "*"
+gunicorn = "*"
+pymongo = "*"
+flask-pymongo = "*"
+dnspython = "*"
+python-dotenv = "*"
 
 [dev-packages]
 

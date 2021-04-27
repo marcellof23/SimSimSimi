@@ -1,4 +1,4 @@
-import {useState} from 'react'
+import {useState,useEffect} from 'react'
 import {BrowserRouter as Router, Route} from 'react-router-dom'
 import Header from './components/Header'
 import Footer from './components/Footer'
@@ -6,6 +6,8 @@ import Tasks from './components/Tasks'
 import AddTask from './components/AddTask'
 import About from './components/About'
 const App = () => {
+  const [currentTime, setCurrentTime] = useState(0);
+  const [currentTask, setcurrentTask] = useState([]);
   const [showAddTask, setShowAddTask] = useState(false)
   const [tasks, setTasks] = useState([
     {
@@ -27,6 +29,16 @@ const App = () => {
         reminder: false,
     },
 ])
+
+useEffect(() => {
+  fetch('/time').then(res => res.json()).then(data => {
+    setCurrentTime(data.time);
+  });
+  fetch('/view').then(res => res.json()).then(data => {
+    setcurrentTask(data);
+    console.log(data);
+  });
+}, []);
 
 // Add Task
 const addTask = (task) => {
@@ -57,6 +69,16 @@ const toggleReminder = (id) => {
           </>
         ) }/>
         <Route path='/about' component={About}/>
+        <p>The current time is {currentTime}.</p>
+        {/* <p>The current task is {currentTask}.</p> */}
+        {currentTask.map((item, i) => (
+            <tr key={i}>
+                <td>{item.user_id}</td>
+                <td>{item.text}</td>
+                <td>{item.day}</td>
+                <td>{item.reminder}</td>
+            </tr>
+        ))}
         <Footer/>
     </div>
     </Router>
