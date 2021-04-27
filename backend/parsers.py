@@ -1,8 +1,9 @@
 import re
+import nltk
 from nltk.corpus import stopwords
 from nltk.tokenize import sent_tokenize, word_tokenize
 from nltk.stem import PorterStemmer
-
+print(nltk)
 regex_kode_matkul = "[A-Z]{2}[0-9]{4}"
 regex_tanggal = "([0-9]{2}[/-][0-9]{2}[/-][0-9]{4})|([0-9]{2}\s*(Januari|Februari|Maret|April|Mei|Juni|Juli|Agustus|September|Oktober|November|Desember)\s*[0-9{4}])"
 regex_jenis_task = "([Tt]ubes|[Tt]ucil|[Tt]ugas|[Pp]raktikum|[Uu]jian|[Kk]uis)"
@@ -32,7 +33,7 @@ def RegexCleaning(string_kotor):
 	#Ubah jadi Lowercase
 	string_bersih = string_bersih.lower()
 	#Hilangkan punctuations
-	string_bersih = re.sub(r'[%s]' % re.escape(string.punctuation), ' ', string_bersih)
+	string_bersih = re.sub(r'[%s]' % re.escape(string_bersih.punctuation), ' ', string_bersih)
 	#Lowercase numbers
 	string_bersih = re.sub(r'[0-9]', '', string_bersih)
 	#Hilangkan double space
@@ -75,7 +76,7 @@ def list_to_string(list_of_words):
 	'''
 	ret = ''
 	for word in list_of_words:
-		ret.append(word + ' ')
+		ret = ret + (word + ' ')
 	if len(ret) > 0:
 		ret = ret[:-1]
 	return ret
@@ -84,7 +85,7 @@ def clean_string(s):
 	'''
 	melakukan stemming terhadap s dan menghilangkan stop word dari s
 	'''
-	return list_to_string(remove_stop_words(stem_words(string_to_list(regex_cleaning(s)))))
+	return list_to_string(remove_stop_words(stem_words(string_to_list(RegexCleaning(s)))))
 
 def get_lps(s):
 	'''
@@ -182,7 +183,7 @@ def resolve_feature(list_of_candidates, user_input):
 	candidate_scores.sort(reverse=True)
 	chosen_candidate_idx = candidate_scores[0][1]
 	chosen_candidate_params = list_of_candidates[chosen_candidate_idx]["params"]
-	chosen_candidate_feature_id = list_of_candidates[chosen_candidate_params]["id"]
+	chosen_candidate_feature_id = list_of_candidates[chosen_candidate_idx]["id"]
 
 	# cari argumen-argumen untuk fitur
 	args = {}
