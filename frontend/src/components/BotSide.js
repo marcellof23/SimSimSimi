@@ -18,7 +18,7 @@ export default function BotMessage({ fetchMessage }) {
 
   return (
     <div className="message-container-bot">
-      <div><Avatar githubHandle="weebs" size={50} round="20px" /></div>
+      <div><Avatar src="kirby2.png" size={50} round="20px" /></div>
       <div className="bot-message">{isLoading ? "..." : message}</div>
     </div>
   );
