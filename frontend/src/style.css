@@ -32,16 +32,17 @@
   
   .message-container-bot {
     width: 100%;
-    text-align: left;
+    text-align: justify;
     margin-bottom: 10px;
     display: inline-flex;
   }
 
   .message-container-client {
     width: 100%;
-    text-align: right;
+    text-align: justify;
     margin-bottom: 10px;
     display: inline-flex;
+    justify-content: flex-end;
   }
   
   .bot-message {
