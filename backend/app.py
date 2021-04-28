@@ -17,7 +17,7 @@ load_dotenv()
 #yang bawah buat build
 app = Flask(__name__, static_folder='./build', static_url_path='/')
 CORS(app)
-DATABASE = os.getenv('DATABASE')
+DATABASE = os.getenv('DATABASE')	
 client = pymongo.MongoClient(DATABASE)
 
 # Database
