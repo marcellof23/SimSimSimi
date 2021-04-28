@@ -8,7 +8,7 @@ from nltk.corpus import stopwords
 from nltk.tokenize import sent_tokenize, word_tokenize
 from nltk.stem import PorterStemmer
 from datetime import datetime as dt
-locale.setlocale(locale.LC_TIME, 'id_ID.UTF-8')
+# locale.setlocale(locale.LC_TIME, 'id_ID.UTF-8')
 
 DATE_FORMAT = '%d/%m/%Y'
 

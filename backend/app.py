@@ -234,6 +234,7 @@ def not_found(e):
 
 #buat deploy ambil yang atas
 if(__name__ == '__main__'):
-	app.run(host='0.0.0.0', debug=False, port=os.environ.get('PORT', 80))
+	port = int(os.environ.get("PORT", 5000))
+	app.run(host='0.0.0.0', port=port)
     # app.run(debug=True, host='127.0.0.1')
 	# app.run()
