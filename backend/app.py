@@ -8,15 +8,14 @@ from dotenv import load_dotenv
 from parsers import resolve_feature, DATE_FORMAT,editDist
 from datetime import datetime as dt
 from datetime import timedelta
-import requests
 import re
 import nltk
 
 load_dotenv()
 
-app = Flask(__name__)
+# app = Flask(__name__)
 #yang bawah buat build
-# app = Flask(__name__, static_folder='./build', static_url_path='/')
+app = Flask(__name__, static_folder='build', static_url_path='')
 CORS(app)
 DATABASE = os.getenv('DATABASE')	
 client = pymongo.MongoClient("mongodb+srv://dbUsers:bodoamatwoi@cluster0.wuqpo.mongodb.net/test")
@@ -50,9 +49,13 @@ db_path = os.path.join(basedir, "tes.db")
 # def what_ismy_basedir():
 # 	return basedir
 #yang bawah buat build
-@app.route('/')
+@app.route('/', methods=["GET"])
 def index():
     return app.send_static_file('index.html')
+
+@app.route('/favicon.ico', methods=["GET"])
+def favicon():
+    return app.send_static_file('favicon.ico')
 
 
 @app.route("/view", methods=["GET"])
@@ -231,5 +234,6 @@ def not_found(e):
 
 #buat deploy ambil yang atas
 if(__name__ == '__main__'):
-	# app.run(host='0.0.0.0', debug=False, port=os.environ.get('PORT', 80))
-    app.run(debug=True, host='127.0.0.1')
+	app.run(host='0.0.0.0', debug=False, port=os.environ.get('PORT', 80))
+    # app.run(debug=True, host='127.0.0.1')
+	# app.run()
