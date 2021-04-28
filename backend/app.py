@@ -95,13 +95,7 @@ def HandleTasks():
 		mydict['topik'] = args['topik']
 		users.insert_one(mydict)
 		# return Response(status=201)
-		message = 
-			'Task berhasil dicatat!\n' +
-			str(mydict['id']) + '. '+
-			dt.strftime(mydict['tanggal'], DATE_FORMAT) + ' - ' +
-			mydict['kode_matkul'] + ' - ' +
-			mydict['jenis_task'] + ' - '+
-			mydict['topik']
+		message = 'Task berhasil dicatat!\n' + str(mydict['id']) + '. '+ dt.strftime(mydict['tanggal'], DATE_FORMAT) + ' - ' + mydict['kode_matkul'] + ' - ' + mydict['jenis_task'] + ' - ' + mydict['topik']
 		return json.dumps({'id': 1, 'message': message})
 
 	elif(res['id'] == 2):
@@ -140,13 +134,13 @@ def HandleTasks():
 	elif(res['id'] == 3):
 		if 'jenis_task' in args and 'kode_matkul' in args:
 			tasks = users.find({"jenis_task" : args['jenis_task'], "kode_matkul" : args['kode_matkul']}, {'_id': False})
-			return json.dumps({'id': 3, [task for task in tasks]}, default=str)
+			return json.dumps({'id': 3, 'item': [task for task in tasks]}, default=str)
 		elif 'jenis_task' in args:
 			tasks = users.find({"jenis_task" : args['jenis_task']}, {'_id': False})
-			return json.dumps({'id': 3, [task for task in tasks]}, default=str)
+			return json.dumps({'id': 3, 'item': [task for task in tasks]}, default=str)
 		elif 'kode_matkul' in args:
 			tasks = users.find({"kode_matkul" : args['kode_matkul']}, {'_id': False})
-			return json.dumps({'id': 3, [task for task in tasks]}, default=str)
+			return json.dumps({'id': 3, 'item': [task for task in tasks]}, default=str)
 
 	elif(res['id'] == 4):
 		if(args['tanggal'] is None):
@@ -171,13 +165,23 @@ def HandleTasks():
 			return json.dumps({'id': 5, 'message': message})
 
 	elif(res['id'] == 6):
-		help_message = 
-			'[Fitur]\n' +
-			'1. Menambahkan task baru\n' +
-			'2. Melihat daftar task\n' +
-			'3. Menampilkan deadline suatu matkul/tugas\n' + 
-			'4. '
-		return Response(status=201)
+		help_message = 	(	'[Fitur]\n'
+							'1. Menambahkan task baru\n'
+							'2. Melihat daftar task\n'
+							'3. Menampilkan deadline suatu matkul/tugas\n'
+							'4. Memperbaharui tanggal task\n'
+							'5. Menandai bahwa suatu task sudah selesai\n'
+							'6. Menampilkan opsi help\n'
+							'\n'
+							'[Kata Penting: Jenis-Jenis Task]\n'
+							'1. Tubes\n'
+							'2. Tucil\n'
+							'3. Tugas\n'
+							'4. Kuis\n'
+							'5. Ujian\n'
+							'6. Praktikum\n' )
+		# return Response(status=201)
+		return json.dumps({'id': 6, 'message': help_message})
 
 	return Response(status=201)
 @app.route('/api', methods=['POST'])
