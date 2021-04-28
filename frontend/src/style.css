@@ -6,6 +6,7 @@
     text-align: center;
     display: flex;
     min-width: 400px;
+    max-width: 400px;
     flex-flow: column;
     overflow: hidden;
   }
@@ -31,6 +32,7 @@
   }
   
   .message-container {
+    height: 100%;
     width: 100%;
   }
   
@@ -48,6 +50,7 @@
   }
   
   .user-message {
+    align-self: flex-end;
     animation-name: bounceIn;
     animation-duration: 0.4s;
     animation-fill-mode: both;

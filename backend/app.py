@@ -6,6 +6,7 @@ import os
 import json
 from dotenv import load_dotenv
 from parsers import resolve_feature
+import re
 
 load_dotenv()
 
@@ -68,6 +69,8 @@ def HandleTasks():
 	if(res['id'] == -1):
 		return "NGGA ADA WOIIIIIIIIIII"
 	if (res['id'] == 1):
+		if(res['args']['tanggal'] is None):
+			return "TANGGAL NULL"
 		jumlah = users.find().count()
 		if jumlah == 0:
 			jumlah = 1
@@ -83,12 +86,18 @@ def HandleTasks():
 		users.insert_one(mydict)
 		return Response(status=201)
 	elif(res['id'] == 2):
+		if(('tanggal_awal' in res['args'].keys()) and res['args']['tanggal_awal'] is None):
+			return "TANGGAL NULL"
+		if(('tanggal_akhir' in res['args'].keys()) and res['args']['tanggal_awal'] is None):
+			return "TANGGAL NULL"
 		tasks = users.find({}, {'_id': False})
 		return json.dumps([task for task in tasks])
 	elif(res['id'] == 3):
 		tanggal_deadline = users.find_one({"jenis_task" : res['args']['jenis_task'], "kode_matkul" : res['args']['kode_matkul']})
 		return json.dumps(tanggal_deadline['tanggal'])
 	elif(res['id'] == 4):
+		if(res['args']['tanggal'] is None):
+			return "TANGGAL NULL"
 		lama = users.find_one({"id" : res['args']['id_task']})
 		baru = lama
 		baru['tanggal'] = res['args']['tanggal']
