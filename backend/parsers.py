@@ -184,24 +184,8 @@ def get_args(params, user_input):
 	args = {}
 	for param in params:
 		if param == 'topik':
-			# handle topik secara khusus
-			# bagian ini rawan bug kayaknya
-			# harusnya yang masuk sini cuma fitur 1: add task
-			topik = user_input
-			# hapus substring sebelum jenis task
-			match = re.search(params['jenis_task'], topik)
-			if match is not None:
-				topik = topik[match.start():]
-			# hapus jenis task
-			topik = re.sub(params['jenis_task'], '', topik)
-			# hapus tanggal
-			topik = re.sub(params['tanggal'], '', topik)
-			# hapus kode matkul
-			topik = re.sub(params['kode_matkul'], '', topik)
-			# bersihin pake stemming, stop word removal, regex
-			topik = clean_string(topik)
-			# semoga udah jadi topik task
-			args[param] = topik
+			# copy dulu string user utuh ke topik
+			args[param] = user_input
 
 		elif param == 'tanggal_awal':
 			# handle tanggal awal
@@ -218,6 +202,37 @@ def get_args(params, user_input):
 				else:
 					args[param] = regex_res[0]
 	# print('args sebelum normalize: ', args)
+
+	# bagusin key topik
+	# rawan bug kayaknya
+	if 'topik' in args:
+		topik = user_input
+		# hapus substring sebelum jenis task
+		match = re.search(params['jenis_task'], topik)
+		if match is not None:
+			topik = topik[match.start():]
+		# hapus jenis task
+		topik = re.sub(params['jenis_task'], '', topik)
+		# hapus tanggal
+		topik = re.sub(params['tanggal'], '', topik)
+		# hapus kode matkul
+		topik = re.sub(params['kode_matkul'], '', topik)
+		# bersihin pake stemming, stop word removal, regex
+		topik = clean_string(topik)
+		# delete string manual
+		bad_strings = [
+			'tanggal'
+		]
+		for s in bad_strings:
+			topik = re.sub(s, '', topik)
+		# bersihin whitespace
+		topik = list_to_string(string_to_list(topik))
+		# semoga udah jadi topik task bagus
+		args[param] = topik
+
+	# kalau ada key hari_ini, buat key n_hari yang valuenya 0
+	if 'hari_ini' in args:
+		args['n_hari'] = 0
 
 	# pastikan semua tanggal berformat dd/mm/yyyy
 	if 'tanggal' in args:
@@ -300,7 +315,8 @@ def resolve_feature(list_of_candidates, user_input):
 # 	'lihat',
 # 	'Lihat',
 # 	'selesai task 3',
-# 	'Tubes IF2210 Normalisasi pada tanggal 10 Maret 2022'
+# 	'Tubes IF2210 Normalisasi pada tanggal 40 Maret 2022',
+# 	'Tubes IF2205 basdat pada tanggal 13 Maret 2012'
 # ]
 # for test in test_input:
 # 	print(test, ':\n', resolve_feature(test_candidates['dictionary'], test))

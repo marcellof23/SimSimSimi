@@ -4,6 +4,7 @@ import ClientSide from "./components/ClientSide";
 import Messages from "./components/Messages";
 import Input from "./components/Input";
 import Header from "./components/Header";
+import LandingPage from "./components/LandingPage";
 import "./style.css";
 import "./chatbot.scss"
 import API from "./API";
@@ -23,6 +24,8 @@ const App = () => {
     loadWelcomeMessage();
   }, []);
 
+  
+
   const send = async text => {
     const newMessages = messages.concat(
       <ClientSide key={messages.length + 1} text={text} />,
@@ -32,14 +35,24 @@ const App = () => {
       />
     );
     setMessages(newMessages);
+    await fetch('/views').then(res => res.json()).then(data => {
+      console.log(data);
+    });
   };
 
   return (
-    <div className="chatbot">
-      <Header />
-      <Messages messages={messages} />
-      <Input onSend={send} />
-    </div>
+    <Router>
+      <Route path='/' exact render={(props) => (
+        <LandingPage/>
+        ) }/>
+      <Route path='/chat' exact render={(props) => (
+        <div className="chatbot">
+          <Header />
+          <Messages messages={messages} />
+          <Input onSend={send} />
+        </div>
+        ) }/>
+    </Router>
   );
 }
 
