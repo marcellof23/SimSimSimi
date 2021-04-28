@@ -55,7 +55,7 @@
     min-width: 40px;
     background: #262626;
     color: #fff;
-    max-width: 90%px !important;
+    max-width: 300pxpx !important;
     word-wrap: break-word !important;
   }
   
@@ -76,7 +76,7 @@
       no-repeat center;
     background-attachment: fixed;
     color: #fff;
-    max-width: 90% !important;
+    max-width: 300px !important;
     word-wrap: break-word !important;
   }
   
