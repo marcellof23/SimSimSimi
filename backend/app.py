@@ -182,8 +182,7 @@ def HandleTasks():
 		if(args['tanggal'] is None):
 			return json.dumps({'id': 4, 'message': 'Kasih tanggal barunya dong'})
 		lama = users.find_one({"id" : args['id_task']})
-		baru = lama
-		baru['tanggal'] = args['tanggal']
+		baru = { "$set" : {"tanggal" : args['tanggal']} }
 		users.update_one(lama, baru)
 		message = 'Tanggal task ' + str(args['id_task']) + ' berhasil diubah!'
 		return json.dumps({'id': 4, 'message': message}) # pesan berhasil
@@ -192,12 +191,12 @@ def HandleTasks():
 		items = args['id_task']
 		myquery = {'id' : items} 
 		ret = users.delete_one(myquery)
-		if ret['deletedCount'] > 0:
+		if ret.deleted_count > 0:
 			# berhasil
 			message = 'Task ' + str(args['id_task']) + ' berhasil dihapus!'
 			return json.dumps({'id': 5, 'message': message})
 		else:
-			message = 'Task nomor' + str(args['id_task']) + ' tidak ada'
+			message = 'Task nomor ' + str(args['id_task']) + ' tidak ada'
 			return json.dumps({'id': 5, 'message': message})
 
 	elif(res['id'] == 6):
