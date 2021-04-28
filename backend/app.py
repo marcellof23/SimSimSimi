@@ -69,17 +69,17 @@ def HandleTasks():
 	mydict = {}
 	print('masuk fitur', res['id'])
 	if(res['id'] == -1):
-		return json.dumps({'err': 'naon'})
+		return json.dumps({'id':-1, 'message': 'naon'})
 	if (res['id'] == 1):
 		# cek komponen task lengkap apa enggak
 		if 'jenis_task' not in args.keys():
-			return json.dumps({'err': 'Kasih keterangan dong ini tubes, tucil, kuis, ujian, atau praktikum'})
+			return json.dumps({'id': 1, 'message': 'Kasih keterangan dong ini tubes, tucil, kuis, ujian, atau praktikum'})
 		if 'kode_matkul' not in args:
-			return json.dumps({'err': 'Tambahin kode matkul dong'})
+			return json.dumps({'id': 1, 'message': 'Tambahin kode matkul dong'})
 		if 'tanggal' not in args:
-			return json.dumps({'err': 'Tambahin tanggal deadline atau tanggal diadakannya dong'})
+			return json.dumps({'id': 1, 'message': 'Tambahin tanggal deadline atau tanggal diadakannya dong'})
 		if 'topik' not in args:
-			return json.dumps({'err': 'Tambahin topik dong'})
+			return json.dumps({'id': 1, 'message': 'Tambahin topik dong'})
 		# tambah task ke database
 		jumlah = users.find().count()
 		if jumlah == 0:
@@ -94,7 +94,16 @@ def HandleTasks():
 		mydict['tanggal'] = dt.strptime(args['tanggal'], DATE_FORMAT)
 		mydict['topik'] = args['topik']
 		users.insert_one(mydict)
-		return Response(status=201)
+		# return Response(status=201)
+		message = 
+			'Task berhasil dicatat!\n' +
+			str(mydict['id']) + '. '+
+			dt.strftime(mydict['tanggal'], DATE_FORMAT) + ' - ' +
+			mydict['kode_matkul'] + ' - ' +
+			mydict['jenis_task'] + ' - '+
+			mydict['topik']
+		return json.dumps({'id': 1, 'message': message})
+
 	elif(res['id'] == 2):
 		# bagi kasus tergantung args
 		if len(args) == 0:
@@ -105,20 +114,20 @@ def HandleTasks():
 			# pake tanggal
 			# cek dulu tanggalnya lengkap apa enggak
 			if args['tanggal_awal'] is None:
-				return json.dumps({'err': 'Kayaknya format tanggal kamu salah, coba pake dd/mm/yyyy'})
+				return json.dumps({'id': 2, 'message': 'Kayaknya format tanggal kamu salah, coba pake dd/mm/yyyy'})
 			if ('tanggal_akhir' not in args) or (args['tanggal_akhir'] is None):
-				return json.dumps({'err': 'Kamu cuma masukin satu tanggal, coba masukin satu lagi'})
+				return json.dumps({'id': 2, 'message': 'Kamu cuma masukin satu tanggal, coba masukin satu lagi'})
 			tanggal_awal = dt.strptime(args['tanggal_awal'], DATE_FORMAT)
 			tanggal_akhir = dt.strptime(args['tanggal_akhir'], DATE_FORMAT)
 			tasks = users.find({'tanggal': {'$gte': tanggal_awal, '$lte': tanggal_akhir}}, {'_id': False})
-			return json.dumps([task for task in tasks], default=str)
+			return json.dumps({'id': 2, 'item': [task for task in tasks]}, default=str)
 		if 'n_minggu' in args:
 			# pake minggu
 			tanggal_awal = dt.now().replace(hour=0, minute=0, second=0, microsecond=0)
 			time_change = timedelta(weeks=args['n_minggu'])
 			tanggal_akhir = tanggal_awal + time_change
 			tasks = users.find({'tanggal': {'$gte': tanggal_awal, '$lte': tanggal_akhir}}, {'_id': False})
-			return json.dumps([task for task in tasks], default=str)
+			return json.dumps({'id': 2, 'item': [task for task in tasks]}, default=str)
 		if 'n_hari' in args:
 			# pake hari
 			tanggal_awal = dt.now().replace(hour=0, minute=0, second=0, microsecond=0)
@@ -126,33 +135,50 @@ def HandleTasks():
 			tanggal_akhir = tanggal_awal + time_change
 			print('tanggal:',tanggal_awal,tanggal_akhir)
 			tasks = users.find({'tanggal': {'$gte': tanggal_awal, '$lte': tanggal_akhir}}, {'_id': False})
-			return json.dumps([task for task in tasks], default=str)
+			return json.dumps({'id': 2, 'item': [task for task in tasks]}, default=str)
 
 	elif(res['id'] == 3):
 		if 'jenis_task' in args and 'kode_matkul' in args:
 			tasks = users.find({"jenis_task" : args['jenis_task'], "kode_matkul" : args['kode_matkul']}, {'_id': False})
-			return json.dumps([task for task in tasks], default=str)
+			return json.dumps({'id': 3, [task for task in tasks]}, default=str)
 		elif 'jenis_task' in args:
 			tasks = users.find({"jenis_task" : args['jenis_task']}, {'_id': False})
-			return json.dumps([task for task in tasks], default=str)
+			return json.dumps({'id': 3, [task for task in tasks]}, default=str)
 		elif 'kode_matkul' in args:
-			print('masuk sini')
 			tasks = users.find({"kode_matkul" : args['kode_matkul']}, {'_id': False})
-			return json.dumps([task for task in tasks], default=str)
+			return json.dumps({'id': 3, [task for task in tasks]}, default=str)
 
 	elif(res['id'] == 4):
-		if(res['args']['tanggal'] is None):
-			return "TANGGAL NULL"
-		lama = users.find_one({"id" : res['args']['id_task']})
+		if(args['tanggal'] is None):
+			return json.dumps({'id': 4, 'message': 'Kasih tanggal barunya dong'})
+		lama = users.find_one({"id" : args['id_task']})
 		baru = lama
-		baru['tanggal'] = res['args']['tanggal']
+		baru['tanggal'] = args['tanggal']
 		users.update_one(lama, baru)
+		message = 'Tanggal task ' + str(args['id_task']) + ' berhasil diubah!'
+		return json.dumps({'id': 4, 'message': message}) # pesan berhasil
+
 	elif(res['id'] == 5):
-		items = res['args']['id_task']
+		items = args['id_task']
 		myquery = {'id' : items} 
-		users.delete_one(myquery)
-	elif(res['id'] == 6):	
+		ret = users.delete_one(myquery)
+		if ret['deletedCount'] > 0:
+			# berhasil
+			message = 'Task ' + str(args['id_task']) + ' berhasil dihapus!'
+			return json.dumps({'id': 5, 'message': message})
+		else:
+			message = 'Task nomor' + str(args['id_task']) + ' tidak ada'
+			return json.dumps({'id': 5, 'message': message})
+
+	elif(res['id'] == 6):
+		help_message = 
+			'[Fitur]\n' +
+			'1. Menambahkan task baru\n' +
+			'2. Melihat daftar task\n' +
+			'3. Menampilkan deadline suatu matkul/tugas\n' + 
+			'4. '
 		return Response(status=201)
+
 	return Response(status=201)
 if(__name__ == '__main__'):
     app.run(debug=True, host='127.0.0.1')
