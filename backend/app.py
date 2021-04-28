@@ -7,6 +7,7 @@ import json
 from dotenv import load_dotenv
 from parsers import resolve_feature, DATE_FORMAT
 from datetime import datetime as dt
+import re
 
 load_dotenv()
 
@@ -66,8 +67,8 @@ def HandleTasks():
 	res = resolve_feature(Dict[0]['dictionary'], query)
 	args = res['args']
 	mydict = {}
-	# print(res)
-	print('ini masuk fitur id', res['id'])
+	if(res['id'] == -1):
+		return "NGGA ADA WOIIIIIIIIIII"
 	if (res['id'] == 1):
 		# cek komponen task lengkap apa enggak
 		if 'jenis_task' not in args.keys():
@@ -116,6 +117,8 @@ def HandleTasks():
 		tanggal_deadline = users.find_one({"jenis_task" : res['args']['jenis_task'], "kode_matkul" : res['args']['kode_matkul']})
 		return json.dumps(tanggal_deadline['tanggal'])
 	elif(res['id'] == 4):
+		if(res['args']['tanggal'] is None):
+			return "TANGGAL NULL"
 		lama = users.find_one({"id" : res['args']['id_task']})
 		baru = lama
 		baru['tanggal'] = res['args']['tanggal']
@@ -126,5 +129,6 @@ def HandleTasks():
 		users.delete_one(myquery)
 	elif(res['id'] == 6):	
 		return Response(status=201)
+	return Response(status=201)
 if(__name__ == '__main__'):
     app.run(debug=True, host='127.0.0.1')

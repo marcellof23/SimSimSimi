@@ -5,7 +5,7 @@
     background: #000;
     text-align: center;
     display: flex;
-    min-width: 400px;
+    width: 400px;
     flex-flow: column;
     overflow: hidden;
   }
@@ -22,39 +22,52 @@
   
   .messages {
     width: 100%;
-    max-height: 600px;
-    min-height: 500px;
+    height: 400px;
     overflow: auto;
     display: flex;
     flex-direction: column;
     padding: 10px 0px;
+    padding-right: 17px; /* Increase/decrease this value for cross-browser compatibility */
+    box-sizing: content-box;
   }
   
-  .message-container {
+  .message-container-bot {
     width: 100%;
+    text-align: justify;
+    margin-bottom: 10px;
+    display: inline-flex;
+  }
+
+  .message-container-client {
+    width: 100%;
+    text-align: justify;
+    margin-bottom: 10px;
+    display: inline-flex;
+    justify-content: flex-end;
   }
   
   .bot-message {
     animation-name: bounceIn;
     animation-duration: 0.4s;
     animation-fill-mode: both;
-    float: left;
-    padding: 15px 20px;
+    padding: 10px 20px;
     margin: 5px;
-    border-radius: 20px 20px 20px 1px;
+    border-radius: 1px 20px 20px 20px;
     min-width: 40px;
     background: #262626;
     color: #fff;
+    max-width: 300pxpx !important;
+    word-wrap: break-word !important;
   }
   
   .user-message {
+    align-self: flex-end;
     animation-name: bounceIn;
     animation-duration: 0.4s;
     animation-fill-mode: both;
-    float: right;
-    padding: 15px 10px;
+    padding: 10px 10px;
     margin: 10px;
-    border-radius: 20px 20px 1px 20px;
+    border-radius: 20px 1px 20px 20px;
     background: #cccccc;
     background: linear-gradient(
         180deg,
@@ -65,6 +78,8 @@
       no-repeat center;
     background-attachment: fixed;
     color: #fff;
+    max-width: 300px !important;
+    word-wrap: break-word !important;
   }
   
   .input {
