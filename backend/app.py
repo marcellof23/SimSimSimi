@@ -13,7 +13,9 @@ import re
 
 load_dotenv()
 
-app = Flask(__name__)
+# app = Flask(__name__)
+#yang bawah buat build
+app = Flask(__name__, static_folder='./build', static_url_path='/')
 CORS(app)
 DATABASE = os.getenv('DATABASE')
 client = pymongo.MongoClient(DATABASE)
@@ -41,9 +43,13 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 db_path = os.path.join(basedir, "tes.db")
 
 
-@app.route("/", methods=["GET"])
-def what_ismy_basedir():
-	return basedir
+# @app.route("/", methods=["GET"])
+# def what_ismy_basedir():
+# 	return basedir
+#yang bawah buat build
+@app.route('/')
+def index():
+    return app.send_static_file('index.html')
 
 
 @app.route("/view", methods=["GET"])
@@ -217,5 +223,11 @@ def coba():
 	print(req)
 	return { "adsf" : "1"}
 
+@app.errorhandler(404)
+def not_found(e):
+    return app.send_static_file('index.html')
+
+#buat deploy ambil yang atas
 if(__name__ == '__main__'):
-    app.run(debug=True, host='127.0.0.1')
+	app.run(host='0.0.0.0', debug=False, port=os.environ.get('PORT', 80))
+    # app.run(debug=True, host='127.0.0.1')
