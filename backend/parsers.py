@@ -2,11 +2,13 @@ import re
 import json
 import string
 import nltk
+import string
+import locale
 from nltk.corpus import stopwords
 from nltk.tokenize import sent_tokenize, word_tokenize
 from nltk.stem import PorterStemmer
-import string
 from datetime import datetime as dt
+locale.setlocale(locale.LC_TIME, 'id_ID.UTF-8')
 
 DATE_FORMAT = '%d/%m/%Y'
 
@@ -270,11 +272,11 @@ def resolve_feature(list_of_candidates, user_input):
 	
 	return {'id': chosen_candidate_feature_id, 'score': chosen_candidate_score, 'args': args}
 
-# testing
+# # testing
 # nltk.download('stopwords')
 # fopen = open('database/dictionary.json')
 # test_candidates = json.load(fopen)
-# print(test_candidates)
+# # print(test_candidates)
 # test_input = [
 # 	'Apakah mayones sebuah instrumen?',
 # 	'Tubes IF2211 String Matching pada 14 April 2021',
@@ -297,7 +299,8 @@ def resolve_feature(list_of_candidates, user_input):
 # 	'help',
 # 	'lihat',
 # 	'Lihat',
-# 	'selesai task 3'
+# 	'selesai task 3',
+# 	'Tubes IF2210 Normalisasi pada tanggal 10 Maret 2022'
 # ]
 # for test in test_input:
 # 	print(test, ':\n', resolve_feature(test_candidates['dictionary'], test))
