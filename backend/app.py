@@ -65,6 +65,8 @@ def HandleTasks():
 	res = resolve_feature(Dict[0]['dictionary'], query)
 	mydict = {}
 	print(res)
+	if(res['id'] == -1):
+		return "NGGA ADA WOIIIIIIIIIII"
 	if (res['id'] == 1):
 		jumlah = users.find().count()
 		if jumlah == 0:
