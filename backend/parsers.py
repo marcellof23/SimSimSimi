@@ -100,9 +100,10 @@ def get_lps(s):
 	return ret
 
 
-def has_pattern(s, p):
+def first_occurence(s, p):
 	'''
-	mengembalikan True apabila pattern p terdapat pada string s
+	mengembalikan index kemunculan awal pattern p pada string s
+	mengembalikan -1 apabila p tidak ada pada s
 	dilakukan menggunakan algoritme KMP
 	hanya dapat mencari exact match p di s
 
@@ -113,22 +114,22 @@ def has_pattern(s, p):
 	lps = get_lps(s)
 	i = 0
 	j = 0
-	found = False
-	while not(found) and i < len(s):
+	ret = -1
+	while ret == -1 and i < len(s):
 		if s[i] == p[j]:
 			# karakter sama, majukan index kedua string
 			i += 1
 			j += 1
 		if j == len(p):
 			# karakter p sudah habis
-			found = True
+			ret = i-len(p)+1
 		elif i < len(s) and s[i] != p[j]:
 			# karakter berbeda, pindahkan index p dengan prefix function
 			if j > 0:
 				j = lps[j-1]
 			else:
 				i += 1
-	return found
+	return ret
 
 def count_candidate_score(candidate, user_input):
 	'''
@@ -145,8 +146,15 @@ def count_candidate_score(candidate, user_input):
 	cnt_keyword = len(candidate['keywords'])
 	for keyword in candidate['keywords']:
 		# cek ada pattern keyword apa enggak di user input pakai KMP
-		if has_pattern(user_input, keyword):
+		tmp = first_occurence(user_input, keyword)
+		if tmp > -1:
 			cnt_valid_keyword += 1
+			# new_user_input = ''
+			# if tmp > 0:
+			# 	new_user_input += user_input[:tmp-1]
+			# if tmp+len(keyword) < len(user_input):
+			# 	new_user_input += user_input[tmp+len(keyword):]
+			# user_input = new_user_input
 
 	# hitung valid param
 	cnt_valid_param = 0
@@ -155,8 +163,12 @@ def count_candidate_score(candidate, user_input):
 		# cek regex param match/enggak di user input pakai library regex
 		if re.search(candidate['params'][param], user_input):
 			cnt_valid_param += 1
+			# user_input = re.sub(candidate['params'][param], '', user_input, 1)
 
-	return (cnt_valid_keyword+cnt_valid_param)/(cnt_keyword+cnt_param)
+	# print('sisa string:', user_input, 'param valid =', cnt_valid_param)
+	# print('sisa str:', user_input)
+	score = (cnt_valid_keyword+cnt_valid_param)/(cnt_keyword+cnt_param)
+	return score
 
 def get_date(s_date):
 	'''
@@ -316,7 +328,8 @@ def resolve_feature(list_of_candidates, user_input):
 # 	'Lihat',
 # 	'selesai task 3',
 # 	'Tubes IF2210 Normalisasi pada tanggal 40 Maret 2022',
-# 	'Tubes IF2205 basdat pada tanggal 13 Maret 2012'
+# 	'Tubes IF2205 basdat pada tanggal 13 Maret 2012',
+# 	'Deadline IF2211'
 # ]
 # for test in test_input:
 # 	print(test, ':\n', resolve_feature(test_candidates['dictionary'], test))
