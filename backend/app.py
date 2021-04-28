@@ -14,9 +14,9 @@ import nltk
 
 load_dotenv()
 
-# app = Flask(__name__)
+app = Flask(__name__)
 #yang bawah buat build
-app = Flask(__name__, static_folder='./build', static_url_path='/')
+# app = Flask(__name__, static_folder='./build', static_url_path='/')
 CORS(app)
 DATABASE = os.getenv('DATABASE')	
 client = pymongo.MongoClient("mongodb+srv://dbUsers:bodoamatwoi@cluster0.wuqpo.mongodb.net/test")
@@ -139,7 +139,7 @@ def HandleTasks():
 		if len(args) == 0:
 			# tanpa parameter
 			tasks = users.find({}, {'_id': False})
-			return json.dumps({'id': 2, 'item': [task for task in tasks]}, default=str)
+			return json.dumps({'id': 2, 'item': [task for task in tasks],'message': 'naon'}, default=str)
 		if 'tanggal_awal' in args:
 			# pake tanggal
 			# cek dulu tanggalnya lengkap apa enggak
@@ -150,14 +150,14 @@ def HandleTasks():
 			tanggal_awal = dt.strptime(args['tanggal_awal'], DATE_FORMAT)
 			tanggal_akhir = dt.strptime(args['tanggal_akhir'], DATE_FORMAT)
 			tasks = users.find({'tanggal': {'$gte': tanggal_awal, '$lte': tanggal_akhir}}, {'_id': False})
-			return json.dumps({'id': 2, 'item': [task for task in tasks]}, default=str)
+			return json.dumps({'id': 2, 'item': [task for task in tasks],'message': 'naon'}, default=str)
 		if 'n_minggu' in args:
 			# pake minggu
 			tanggal_awal = dt.now().replace(hour=0, minute=0, second=0, microsecond=0)
 			time_change = timedelta(weeks=args['n_minggu'])
 			tanggal_akhir = tanggal_awal + time_change
 			tasks = users.find({'tanggal': {'$gte': tanggal_awal, '$lte': tanggal_akhir}}, {'_id': False})
-			return json.dumps({'id': 2, 'item': [task for task in tasks]}, default=str)
+			return json.dumps({'id': 2, 'item': [task for task in tasks],'message': 'naon'}, default=str)
 		if 'n_hari' in args:
 			# pake hari
 			tanggal_awal = dt.now().replace(hour=0, minute=0, second=0, microsecond=0)
@@ -165,7 +165,7 @@ def HandleTasks():
 			tanggal_akhir = tanggal_awal + time_change
 			print('tanggal:',tanggal_awal,tanggal_akhir)
 			tasks = users.find({'tanggal': {'$gte': tanggal_awal, '$lte': tanggal_akhir}}, {'_id': False})
-			return json.dumps({'id': 2, 'item': [task for task in tasks]}, default=str)
+			return json.dumps({'id': 2, 'item': [task for task in tasks],'message': 'naon'}, default=str)
 
 	elif(res['id'] == 3):
 		if 'jenis_task' in args and 'kode_matkul' in args:
@@ -232,5 +232,5 @@ def not_found(e):
 
 #buat deploy ambil yang atas
 if(__name__ == '__main__'):
-	app.run(host='0.0.0.0', debug=False, port=os.environ.get('PORT', 80))
-    # app.run(debug=True, host='127.0.0.1')
+	# app.run(host='0.0.0.0', debug=False, port=os.environ.get('PORT', 80))
+    app.run(debug=True, host='127.0.0.1')

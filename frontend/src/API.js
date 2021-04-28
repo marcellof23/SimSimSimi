@@ -49,6 +49,7 @@ const API = {
           body: JSON.stringify(message),
         }).then(r=>r.json()).then(res=>{
           data=res;
+          console.log(data);
         });
       
       return new Promise(function(resolve, reject) {
@@ -64,7 +65,7 @@ const API = {
           }
           else if (data.id === 2) {
             let answer = "";
-            if (message) {
+            if (data.message !== 'naon') {
               answer = data.message;
             }
             else {
