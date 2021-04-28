@@ -17,8 +17,8 @@ regex_tanggal = "([0-9]{2}[/-][0-9]{2}[/-][0-9]{4})|([0-9]{2}\s*(Januari|Februar
 regex_jenis_task = "([Tt]ubes|[Tt]ucil|[Tt]ugas|[Pp]raktikum|[Uu]jian|[Kk]uis)"
 regex_topik = "^[A-Z]"
 
-fopen = open('database/dictionary.json')
-test_candidates = json.load(fopen)
+# fopen = open('database/dictionary.json')
+# test_candidates = json.load(fopen)
 
 def regex_cleaning(string_kotor):
 	'''
@@ -216,7 +216,7 @@ def resolve_feature(list_of_candidates, user_input):
 			regex_res = re.findall(chosen_candidate_params[param], user_input)
 			if len(regex_res) > 0:
 				if param == 'n_hari' or param == 'n_minggu' or param == 'id_task':
-					args[param] = int(re.findall('[0-9]*', regex_res[0])[0])
+					args[param] = int(re.findall('[0-9]+', regex_res[0])[0])
 				else:
 					args[param] = regex_res[0]
 

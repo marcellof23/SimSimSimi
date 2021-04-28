@@ -97,5 +97,6 @@ def HandleTasks():
 		users.delete_one(myquery)
 	elif(res['id'] == 6):	
 		return Response(status=201)
+	return Response(status=201)
 if(__name__ == '__main__'):
     app.run(debug=True, host='127.0.0.1')
