@@ -33,7 +33,7 @@
   
   .message-container-bot {
     width: 100%;
-    text-align: justify;
+    text-align: left;
     margin-bottom: 10px;
     display: inline-flex;
   }
@@ -58,6 +58,7 @@
     color: #fff;
     max-width: 300pxpx !important;
     word-wrap: break-word !important;
+    white-space: pre-line;
   }
   
   .user-message {

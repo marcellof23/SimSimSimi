@@ -35,14 +35,14 @@ const App = () => {
       />
     );
     setMessages(newMessages);
-    await fetch('/api/data',{
-      method: 'POST',
-      headers:{'Content-type':'application/json'},
-      body: JSON.stringify(text),
-    }).then(r=>r.json()).then(res=>{
-      console.log(text);
-      console.log(res);
-    });
+    // await fetch('/api/data',{
+    //   method: 'POST',
+    //   headers:{'Content-type':'application/json'},
+    //   body: JSON.stringify(text),
+    // }).then(r=>r.json()).then(res=>{
+    //   console.log(JSON.stringify(text));
+    //   console.log(res);
+    // });
   };
 
   return (
