@@ -63,7 +63,7 @@ def get_current_time():
 
 @app.route('/api/data', methods=['GET', 'POST'])
 def HandleTasks():
-	query = request.json
+	query = request.form['user_input']
 	res = resolve_feature(Dict[0]['dictionary'], query)
 	args = res['args']
 	mydict = {}
