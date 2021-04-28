@@ -9,8 +9,13 @@ export default function Input({ onSend }) {
 
   const handleSend = e => {
     e.preventDefault();
-    onSend(text);
-    setText("");
+    if (text.length<1) {
+      alert("Silahkan isi pesan terlebih dahulu!");
+    }
+    else {
+      onSend(text);
+      setText("");
+    }
   };
 
   return (
