@@ -43,7 +43,7 @@ const API = {
     GetChatbotResponse: async message => {
       let data='';
       if (message !== "hi")
-        await fetch('simsim-simi.herokuapp.com//api/data',{
+        await fetch('/api/data',{
           method: 'POST',
           headers:{'Content-type':'application/json'},
           body: JSON.stringify(message),
