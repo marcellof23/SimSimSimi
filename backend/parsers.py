@@ -184,24 +184,8 @@ def get_args(params, user_input):
 	args = {}
 	for param in params:
 		if param == 'topik':
-			# handle topik secara khusus
-			# bagian ini rawan bug kayaknya
-			# harusnya yang masuk sini cuma fitur 1: add task
-			topik = user_input
-			# hapus substring sebelum jenis task
-			match = re.search(params['jenis_task'], topik)
-			if match is not None:
-				topik = topik[match.start():]
-			# hapus jenis task
-			topik = re.sub(params['jenis_task'], '', topik)
-			# hapus tanggal
-			topik = re.sub(params['tanggal'], '', topik)
-			# hapus kode matkul
-			topik = re.sub(params['kode_matkul'], '', topik)
-			# bersihin pake stemming, stop word removal, regex
-			topik = clean_string(topik)
-			# semoga udah jadi topik task
-			args[param] = topik
+			# copy dulu string user utuh ke topik
+			args[param] = user_input
 
 		elif param == 'tanggal_awal':
 			# handle tanggal awal
@@ -218,6 +202,33 @@ def get_args(params, user_input):
 				else:
 					args[param] = regex_res[0]
 	# print('args sebelum normalize: ', args)
+
+	# bagusin key topik
+	# rawan bug kayaknya
+	if 'topik' in args:
+		topik = user_input
+		# hapus substring sebelum jenis task
+		match = re.search(params['jenis_task'], topik)
+		if match is not None:
+			topik = topik[match.start():]
+		# hapus jenis task
+		topik = re.sub(params['jenis_task'], '', topik)
+		# hapus tanggal
+		topik = re.sub(params['tanggal'], '', topik)
+		# hapus kode matkul
+		topik = re.sub(params['kode_matkul'], '', topik)
+		# bersihin pake stemming, stop word removal, regex
+		topik = clean_string(topik)
+		# delete string manual
+		bad_strings = [
+			'tanggal'
+		]
+		for s in bad_strings:
+			topik = re.sub(s, '', topik)
+		# bersihin whitespace
+		topik = list_to_string(string_to_list(topik))
+		# semoga udah jadi topik task bagus
+		args[param] = topik
 
 	# kalau ada key hari_ini, buat key n_hari yang valuenya 0
 	if 'hari_ini' in args:
@@ -276,35 +287,36 @@ def resolve_feature(list_of_candidates, user_input):
 	
 	return {'id': chosen_candidate_feature_id, 'score': chosen_candidate_score, 'args': args}
 
-# testing
-nltk.download('stopwords')
-fopen = open('database/dictionary.json')
-test_candidates = json.load(fopen)
-# print(test_candidates)
-test_input = [
-	'Apakah mayones sebuah instrumen?',
-	'Tubes IF2211 String Matching pada 14 April 2021',
-	'Tubes IF2211 String Matching pada 14 April 21',
-	'Tubes IF2211 String Matching pada 14/04/2021',
-	'Tubes IF2211 String Matching pada 14/04/21',
-	'Tubes IF2211 String Matching pada 14-04-21',
-	'tubes IF2211 String Matching',
-	'tubes String Matching pada 14 April 2021',
-	'ada kuis IF3110 Bab 2 sampai 3 pada 22/04/2021',
-	'Apa saja deadline yang dimiliki sejauh ini?',
-	'Deadline 10 minggu ke depan apa saja?',
-	'Selesai task 1',
-	'Apa saja deadline hari ini?',
-	'Antara 03/04/2021 dan 15/04/2021 ada deadline apa saja ya',
-	'Deadline tugas IF2211 itu kapan?',
-	'Deadline task 69 diundur menjadi 28/04/2021',
-	'Saya sudah selesai mengerjakan task 69',
-	'Help',
-	'help',
-	'lihat',
-	'Lihat',
-	'selesai task 3',
-	'Tubes IF2210 Normalisasi pada tanggal 40 Maret 2022'
-]
-for test in test_input:
-	print(test, ':\n', resolve_feature(test_candidates['dictionary'], test))
+# # testing
+# nltk.download('stopwords')
+# fopen = open('database/dictionary.json')
+# test_candidates = json.load(fopen)
+# # print(test_candidates)
+# test_input = [
+# 	'Apakah mayones sebuah instrumen?',
+# 	'Tubes IF2211 String Matching pada 14 April 2021',
+# 	'Tubes IF2211 String Matching pada 14 April 21',
+# 	'Tubes IF2211 String Matching pada 14/04/2021',
+# 	'Tubes IF2211 String Matching pada 14/04/21',
+# 	'Tubes IF2211 String Matching pada 14-04-21',
+# 	'tubes IF2211 String Matching',
+# 	'tubes String Matching pada 14 April 2021',
+# 	'ada kuis IF3110 Bab 2 sampai 3 pada 22/04/2021',
+# 	'Apa saja deadline yang dimiliki sejauh ini?',
+# 	'Deadline 10 minggu ke depan apa saja?',
+# 	'Selesai task 1',
+# 	'Apa saja deadline hari ini?',
+# 	'Antara 03/04/2021 dan 15/04/2021 ada deadline apa saja ya',
+# 	'Deadline tugas IF2211 itu kapan?',
+# 	'Deadline task 69 diundur menjadi 28/04/2021',
+# 	'Saya sudah selesai mengerjakan task 69',
+# 	'Help',
+# 	'help',
+# 	'lihat',
+# 	'Lihat',
+# 	'selesai task 3',
+# 	'Tubes IF2210 Normalisasi pada tanggal 40 Maret 2022',
+# 	'Tubes IF2205 basdat pada tanggal 13 Maret 2012'
+# ]
+# for test in test_input:
+# 	print(test, ':\n', resolve_feature(test_candidates['dictionary'], test))
