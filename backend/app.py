@@ -63,7 +63,7 @@ def get_current_time():
 
 @app.route('/api/data', methods=['GET', 'POST'])
 def HandleTasks():
-	query = request.form['user_input']
+	query = request.json
 	res = resolve_feature(Dict[0]['dictionary'], query)
 	args = res['args']
 	mydict = {}
@@ -180,5 +180,11 @@ def HandleTasks():
 		return Response(status=201)
 
 	return Response(status=201)
+@app.route('/api', methods=['POST'])
+def coba():
+	req = request.json
+	print(req)
+	return { "adsf" : "1"}
+
 if(__name__ == '__main__'):
     app.run(debug=True, host='127.0.0.1')
