@@ -103,7 +103,7 @@ def HandleTasks():
 		if len(args) == 0:
 			# tanpa parameter
 			tasks = users.find({}, {'_id': False})
-			return json.dumps([task for task in tasks], default=str)
+			return json.dumps({'id': 2, 'item': [task for task in tasks]}, default=str)
 		if 'tanggal_awal' in args:
 			# pake tanggal
 			# cek dulu tanggalnya lengkap apa enggak
