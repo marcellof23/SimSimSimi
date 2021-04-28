@@ -5,7 +5,7 @@
     background: #000;
     text-align: center;
     display: flex;
-    min-width: 400px;
+    width: 400px;
     flex-flow: column;
     overflow: hidden;
   }
@@ -30,28 +30,38 @@
     padding: 10px 0px;
   }
   
-  .message-container {
+  .message-container-bot {
     width: 100%;
+    text-align: left;
+    margin-bottom: 10px;
+    display: inline-flex;
+  }
+
+  .message-container-client {
+    width: 100%;
+    text-align: right;
+    margin-bottom: 10px;
+    display: inline-flex;
   }
   
   .bot-message {
     animation-name: bounceIn;
     animation-duration: 0.4s;
     animation-fill-mode: both;
-    float: left;
     padding: 15px 20px;
     margin: 5px;
     border-radius: 20px 20px 20px 1px;
     min-width: 40px;
     background: #262626;
     color: #fff;
+    max-width: 90%px !important;
+    word-wrap: break-word !important;
   }
   
   .user-message {
     animation-name: bounceIn;
     animation-duration: 0.4s;
     animation-fill-mode: both;
-    float: right;
     padding: 15px 10px;
     margin: 10px;
     border-radius: 20px 20px 1px 20px;
@@ -65,6 +75,8 @@
       no-repeat center;
     background-attachment: fixed;
     color: #fff;
+    max-width: 90% !important;
+    word-wrap: break-word !important;
   }
   
   .input {

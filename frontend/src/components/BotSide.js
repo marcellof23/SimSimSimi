@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import Avatar from 'react-avatar';
 
 export default function BotMessage({ fetchMessage }) {
   const [isLoading, setLoading] = useState(true);
@@ -16,7 +17,8 @@ export default function BotMessage({ fetchMessage }) {
   }, [fetchMessage]);
 
   return (
-    <div className="message-container">
+    <div className="message-container-bot">
+      <div><Avatar githubHandle="weebs" size={50} round="20px" /></div>
       <div className="bot-message">{isLoading ? "..." : message}</div>
     </div>
   );
