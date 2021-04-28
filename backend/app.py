@@ -10,6 +10,7 @@ from datetime import datetime as dt
 from datetime import timedelta
 import requests
 import re
+import nltk
 
 load_dotenv()
 
@@ -22,6 +23,8 @@ client = pymongo.MongoClient(DATABASE)
 Database = client.get_database('tasks')
 users = Database.user
 Dict = list(Database.dictionary.find({}))
+nltk.download('punkt')
+nltk.download('stopwords')
 # print(Dict[0]['dictionary'])
 # print(resolve_feature(Dict[0]['dictionary'],"Selesai Task 1"))
 # dictionary = [
