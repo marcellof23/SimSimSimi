@@ -5,9 +5,10 @@ from flask_cors import CORS
 import os
 import json
 from dotenv import load_dotenv
-from parsers import resolve_feature, DATE_FORMAT
+from parsers import resolve_feature, DATE_FORMAT,editDist
 from datetime import datetime as dt
 from datetime import timedelta
+import requests
 import re
 
 load_dotenv()
@@ -63,13 +64,38 @@ def get_current_time():
 
 @app.route('/api/data', methods=['GET', 'POST'])
 def HandleTasks():
-	query = request.form['user_input']
+	query = request.json
+	print(query)
 	res = resolve_feature(Dict[0]['dictionary'], query)
-	args = res['args']
+	if('args' in res):
+		args = res['args']
 	mydict = {}
 	print('masuk fitur', res['id'])
+	importantWords = set()
+	
 	if(res['id'] == -1):
-		return json.dumps({'id':-1, 'message': 'naon'})
+		el = ""
+		init = -1
+		for diction in Dict[0]['dictionary']:
+			for i in range(len(diction['keywords'])):	
+				importantWords.add(diction['keywords'][i])
+		for word in importantWords:
+			print(word)
+		q = query.split()
+		for e in importantWords:
+			for j in range(len(q)):
+				scoreQ = 1 - (editDist(q[j].lower(),e.lower()))/(len(e))
+				formatted_float = "{:.2f}".format(scoreQ)
+				print(q[j] + " " +formatted_float)
+				if(init < scoreQ):
+					el = e
+					init = scoreQ
+		formatted_float = "{:.2f}".format(init)
+		print(el + " " + formatted_float)
+		if(init < 0.5):
+			return json.dumps({'id':-1, 'message': 'naon'})
+		else:
+			return json.dumps({'id':-1, 'message': 'Mungkin maksud anda adalah ' + el})
 	if (res['id'] == 1):
 		# cek komponen task lengkap apa enggak
 		if 'jenis_task' not in args.keys():
@@ -96,6 +122,7 @@ def HandleTasks():
 		users.insert_one(mydict)
 		# return Response(status=201)
 		message = 'Task berhasil dicatat!\n' + str(mydict['id']) + '. '+ dt.strftime(mydict['tanggal'], DATE_FORMAT) + ' - ' + mydict['kode_matkul'] + ' - ' + mydict['jenis_task'] + ' - ' + mydict['topik']
+		print(message)
 		return json.dumps({'id': 1, 'message': message})
 
 	elif(res['id'] == 2):
