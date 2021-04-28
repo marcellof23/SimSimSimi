@@ -5,6 +5,9 @@ import nltk
 from nltk.corpus import stopwords
 from nltk.tokenize import sent_tokenize, word_tokenize
 from nltk.stem import PorterStemmer
+import string
+
+print(nltk)
 from datetime import datetime as dt
 
 DATE_FORMAT = '%d/%m/%Y'
@@ -28,7 +31,7 @@ def regex_cleaning(string_kotor):
 	#Ubah jadi Lowercase
 	string_bersih = string_bersih.lower()
 	#Hilangkan punctuations
-	string_bersih = re.sub(r'[%s]' % re.escape(string_bersih.punctuation), ' ', string_bersih)
+	string_bersih = re.sub(r'[%s]' % re.escape(string.punctuation), ' ', string_bersih)
 	#Lowercase numbers
 	string_bersih = re.sub(r'[0-9]', '', string_bersih)
 	#Hilangkan double space
@@ -219,5 +222,5 @@ def resolve_feature(list_of_candidates, user_input):
 
 	if "tanggal_awal" in args and "tanggal_akhir" in args:
 		if dt.strptime(args["tanggal_awal"]) > dt.strptime(args["tanggal_akhir"]):
-			swap(args["tanggal_awal"], args["tanggal_awal"])
+			args["tanggal_awal"], args["tanggal_akhir"] = args["tanggal_akhir"], args["tanggal_awal"]
 	return {"id": chosen_candidate_feature_id, "args": args}
