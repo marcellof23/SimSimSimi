@@ -18,7 +18,7 @@ load_dotenv()
 app = Flask(__name__, static_folder='./build', static_url_path='/')
 CORS(app)
 DATABASE = os.getenv('DATABASE')	
-client = pymongo.MongoClient(DATABASE)
+client = pymongo.MongoClient("mongodb+srv://dbUsers:bodoamatwoi@cluster0.wuqpo.mongodb.net/test")
 
 # Database
 Database = client.get_database('tasks')
