@@ -12,6 +12,7 @@ flask-pymongo = "*"
 dnspython = "*"
 python-dotenv = "*"
 nltk = "*"
+requests = "*"
 
 [dev-packages]
 

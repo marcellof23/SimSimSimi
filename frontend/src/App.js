@@ -49,13 +49,18 @@ const App = () => {
     <Router>
       <Route path='/' exact render={(props) => (
         <LandingPage/>
+        
         ) }/>
       <Route path='/chat' exact render={(props) => (
-        <div className="chatbot">
+        <>
+        
+        <div className="chatbot"> 
+                     
           <Header />
           <Messages messages={messages} />
           <Input onSend={send} />
         </div>
+        </>
         ) }/>
     </Router>
   );

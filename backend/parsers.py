@@ -299,6 +299,24 @@ def resolve_feature(list_of_candidates, user_input):
 	
 	return {'id': chosen_candidate_feature_id, 'score': chosen_candidate_score, 'args': args}
 
+def editDist(a,b): 
+	lena = len(a)
+	lenb = len(b)
+
+	dp = [[0 for i in range(lena+1)] for j in range(2)]
+
+	for i in range(0, lena+1):
+		dp[0][i] = i
+	for i in range(1, lenb+1):
+		for j in range(1, lena+1):
+			if(j==0):
+				dp[i%2][j] = i
+			elif(a[j-1] == b[i-1]):
+				dp[i%2][j] = dp[(i-1)%2][j-1]
+			else:
+				dp[i%2][j] = min(dp[(i-1) % 2][j], min(dp[i % 2][j - 1],dp[(i - 1) % 2][j - 1])) + 1
+	return (dp[lenb % 2][lena])
+
 # # testing
 # nltk.download('stopwords')
 # fopen = open('database/dictionary.json')

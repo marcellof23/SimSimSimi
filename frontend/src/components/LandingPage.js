@@ -5,6 +5,7 @@ import { FaChevronDown, FaEllipsisH } from "react-icons/fa";
 
 const useStyles = makeStyles((theme) => ({
   tes: {
+    
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
@@ -16,6 +17,7 @@ const useStyles = makeStyles((theme) => ({
     background: 'none',
   },
   appbarWrapper: {
+    left :"60px",
     width: '80%',
     margin: '0 auto',
   },
@@ -49,6 +51,7 @@ export default function Header() {
   }, []);
   return (
     <div className={classes.tes} id="header">
+       
       <AppBar className={classes.appbar} elevation={0}>
         <Toolbar className={classes.appbarWrapper}>
           <h1 className={classes.appbarTitle}>
@@ -74,6 +77,10 @@ export default function Header() {
               <FaChevronDown className={classes.goDown} />
             </IconButton>
         </div>
+         <div class="Character">
+                  <img class="Character_shadow pixelart" src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/21542/DemoRpgCharacterShadow.png" alt="Shadow" />      
+                  <img class="Character_spritesheet pixelart face-down" src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/21542/DemoRpgCharacter.png" alt="Character" />
+      </div>
       </Collapse>
     </div>
   );
