@@ -6,19 +6,14 @@ from nltk.corpus import stopwords
 from nltk.tokenize import sent_tokenize, word_tokenize
 from nltk.stem import PorterStemmer
 import string
-
-print(nltk)
 from datetime import datetime as dt
 
 DATE_FORMAT = '%d/%m/%Y'
 
-regex_kode_matkul = "[A-Z]{2}[0-9]{4}"
-regex_tanggal = "([0-9]{2}[/-][0-9]{2}[/-][0-9]{4})|([0-9]{2}\s*(Januari|Februari|Maret|April|Mei|Juni|Juli|Agustus|September|Oktober|November|Desember)\s*[0-9{4}])"
-regex_jenis_task = "([Tt]ubes|[Tt]ucil|[Tt]ugas|[Pp]raktikum|[Uu]jian|[Kk]uis)"
-regex_topik = "^[A-Z]"
-
-fopen = open('database/dictionary.json')
-test_candidates = json.load(fopen)
+# regex_kode_matkul = "[A-Z]{2}[0-9]{4}"
+# regex_tanggal = "([0-9]{2}[/-][0-9]{2}[/-][0-9]{4})|([0-9]{2}\s*(Januari|Februari|Maret|April|Mei|Juni|Juli|Agustus|September|Oktober|November|Desember)\s*[0-9]{4})"
+# regex_jenis_task = "([Tt]ubes|[Tt]ucil|[Tt]ugas|[Pp]raktikum|[Uu]jian|[Kk]uis)"
+# regex_topik = "^[A-Z]"
 
 def regex_cleaning(string_kotor):
 	'''
@@ -145,22 +140,103 @@ def count_candidate_score(candidate, user_input):
 	'''
 	# hitung valid keyword
 	cnt_valid_keyword = 0
-	cnt_keyword = len(candidate["keywords"])
-	for keyword in candidate["keywords"]:
+	cnt_keyword = len(candidate['keywords'])
+	for keyword in candidate['keywords']:
 		# cek ada pattern keyword apa enggak di user input pakai KMP
 		if has_pattern(user_input, keyword):
 			cnt_valid_keyword += 1
 
 	# hitung valid param
 	cnt_valid_param = 0
-	cnt_param = len(candidate["params"])
-	for param in candidate["params"]:
+	cnt_param = len(candidate['params'])
+	for param in candidate['params']:
 		# cek regex param match/enggak di user input pakai library regex
-		if re.search(candidate["params"][param], user_input):
+		if re.search(candidate['params'][param], user_input):
 			cnt_valid_param += 1
 
 	return (cnt_valid_keyword+cnt_valid_param)/(cnt_keyword+cnt_param)
 
+def get_date(s_date):
+	'''
+	mengembalikan string date dalam format dd/mm/yyyy
+
+	deskripsi args
+	-- s_date: string date berformat dd/mm/yyyy atau %d %B %Y
+	'''
+	date_patterns = ['%d/%m/%Y', '%d/%m/%y', '%d %B %Y', '%d %B %y', '%d-%m-%Y', '%d-%m-%y']
+	for pattern in date_patterns:
+		try:
+			return dt.strftime(dt.strptime(s_date, pattern), DATE_FORMAT)
+		except:
+			pass
+
+def get_args(params, user_input):
+	'''
+	mencari argumen-argumen untuk suatu fitur dari user_input
+	lalu mengembalikannya dalam bentuk dict {"nama_arg": arg}
+
+	deskripsi args
+	-- params: dict berisi {"nama_arg": regex_untuk_arg}
+	-- user_input: string input user
+	'''
+	args = {}
+	for param in params:
+		if param == 'topik':
+			# handle topik secara khusus
+			# bagian ini rawan bug kayaknya
+			# harusnya yang masuk sini cuma fitur 1: add task
+			topik = user_input
+			# hapus substring sebelum jenis task
+			match = re.search(params['jenis_task'], topik)
+			if match is not None:
+				topik = topik[match.start():]
+			# hapus jenis task
+			topik = re.sub(params['jenis_task'], '', topik)
+			# hapus tanggal
+			topik = re.sub(params['tanggal'], '', topik)
+			# hapus kode matkul
+			topik = re.sub(params['kode_matkul'], '', topik)
+			# bersihin pake stemming, stop word removal, regex
+			topik = clean_string(topik)
+			# semoga udah jadi topik task
+			args[param] = topik
+
+		elif param == 'tanggal_awal':
+			# handle tanggal awal
+			# hapus tanggal_awal dari input
+			args[param] = re.findall(params[param], user_input)[0]
+			user_input = re.sub(params[param], '', user_input, 1)
+
+		else:
+			regex_res = re.findall(params[param], user_input)
+			if len(regex_res) > 0:
+				# hapus bagian string dari argumen numerik
+				if param == 'n_hari' or param == 'n_minggu' or param == 'id_task':
+					args[param] = int(re.findall('[0-9]+', regex_res[0])[0])
+				else:
+					args[param] = regex_res[0]
+	# print('args sebelum normalize: ', args)
+
+	# pastikan semua tanggal berformat dd/mm/yyyy
+	if 'tanggal' in args:
+		args['tanggal'] = get_date(args['tanggal'])
+
+	if 'tanggal_awal' in args:
+		args['tanggal_awal'] = get_date(args['tanggal_awal'])
+
+	if 'tanggal_akhir' in args:
+		args['tanggal_akhir'] = get_date(args['tanggal_akhir'])
+
+	# pastikan tanggal awal sebelum tanggal akhir
+	if 'tanggal_awal' in args and 'tanggal_akhir' in args:
+		if dt.strptime(args['tanggal_awal'], DATE_FORMAT) > dt.strptime(args['tanggal_akhir'], DATE_FORMAT):
+			args['tanggal_awal'], args['tanggal_akhir'] = args['tanggal_akhir'], args['tanggal_awal']
+
+	# pastikan semua jenis task diawali huruf kapital
+	if 'jenis_task' in args:
+		args['jenis_task'] = args['jenis_task'].capitalize()
+
+	return args
 
 def resolve_feature(list_of_candidates, user_input):
 	'''
@@ -179,48 +255,49 @@ def resolve_feature(list_of_candidates, user_input):
 	# ambil kandidat dengan skor terbesar
 	# kalau seri, ambil kandidat dengan id fitur terbesar
 	candidate_scores.sort(reverse=True)
+	chosen_candidate_score = candidate_scores[0][0]
+
+	# kembalikan id -1 apabila skor kandidat < 0.5
+	if chosen_candidate_score <= 0.5:
+		return {'id': -1, 'score': chosen_candidate_score}
+
 	chosen_candidate_idx = candidate_scores[0][1]
-	chosen_candidate_params = list_of_candidates[chosen_candidate_idx]["params"]
-	chosen_candidate_feature_id = list_of_candidates[chosen_candidate_idx]["id"]
+	chosen_candidate_params = list_of_candidates[chosen_candidate_idx]['params']
+	chosen_candidate_feature_id = list_of_candidates[chosen_candidate_idx]['id']
 
 	# cari argumen-argumen untuk fitur
-	args = {}
-	for param in chosen_candidate_params:
-		if param == "topik":
-			# handle topik secara khusus
-			# bagian ini rawan bug kayaknya
-			# harusnya yang masuk sini cuma fitur 1: add task
-			topik = user_input
-			# hapus substring sebelum jenis task
-			match = re.search(chosen_candidate_params["jenis_task"], topik)
-			if match is not None:
-				topik = topik[match.start():]
-			# hapus jenis task
-			topik = re.sub(chosen_candidate_params["jenis_task"], '', topik)
-			# hapus tanggal
-			topik = re.sub(chosen_candidate_params["tanggal"], '', topik)
-			# hapus kode matkul
-			topik = re.sub(chosen_candidate_params["kode_matkul"], '', topik)
-			# bersihin pake stemming, stop word removal, regex
-			topik = clean_string(topik)
-			# semoga udah jadi topik task
-			args[param] = topik
+	args = get_args(chosen_candidate_params, user_input)
+	
+	return {'id': chosen_candidate_feature_id, 'score': chosen_candidate_score, 'args': args}
 
-		elif param == "tanggal_awal":
-			# handle tanggal awal
-			# hapus tanggal_awal dari input
-			args[param] = re.findall(chosen_candidate_params[param], user_input)[0]
-			user_input = re.sub(chosen_candidate_params[param], '', user_input, 1)
-
-		else:
-			regex_res = re.findall(chosen_candidate_params[param], user_input)
-			if len(regex_res) > 0:
-				if param == 'n_hari' or param == 'n_minggu' or param == 'id_task':
-					args[param] = int(re.findall('[0-9]*', regex_res[0])[0])
-				else:
-					args[param] = regex_res[0]
-
-	if "tanggal_awal" in args and "tanggal_akhir" in args:
-		if dt.strptime(args["tanggal_awal"]) > dt.strptime(args["tanggal_akhir"]):
-			args["tanggal_awal"], args["tanggal_akhir"] = args["tanggal_akhir"], args["tanggal_awal"]
-	return {"id": chosen_candidate_feature_id, "args": args}
+# testing
+# nltk.download('stopwords')
+# fopen = open('database/dictionary.json')
+# test_candidates = json.load(fopen)
+# print(test_candidates)
+# test_input = [
+# 	'Apakah mayones sebuah instrumen?',
+# 	'Tubes IF2211 String Matching pada 14 April 2021',
+# 	'Tubes IF2211 String Matching pada 14 April 21',
+# 	'Tubes IF2211 String Matching pada 14/04/2021',
+# 	'Tubes IF2211 String Matching pada 14/04/21',
+# 	'Tubes IF2211 String Matching pada 14-04-21',
+# 	'tubes IF2211 String Matching',
+# 	'tubes String Matching pada 14 April 2021',
+# 	'ada kuis IF3110 Bab 2 sampai 3 pada 22/04/2021',
+# 	'Apa saja deadline yang dimiliki sejauh ini?',
+# 	'Deadline 10 minggu ke depan apa saja?',
+# 	'Selesai task 1',
+# 	'Apa saja deadline hari ini?',
+# 	'Antara 03/04/2021 dan 15/04/2021 ada deadline apa saja ya',
+# 	'Deadline tugas IF2211 itu kapan?',
+# 	'Deadline task 69 diundur menjadi 28/04/2021',
+# 	'Saya sudah selesai mengerjakan task 69',
+# 	'Help',
+# 	'help',
+# 	'lihat',
+# 	'Lihat',
+# 	'selesai task 3'
+# ]
+# for test in test_input:
+# 	print(test, ':\n', resolve_feature(test_candidates['dictionary'], test))
