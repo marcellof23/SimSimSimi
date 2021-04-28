@@ -7,6 +7,7 @@ import json
 from dotenv import load_dotenv
 from parsers import resolve_feature, DATE_FORMAT
 from datetime import datetime as dt
+from datetime import timedelta
 import re
 
 load_dotenv()
@@ -34,7 +35,6 @@ Dict = list(Database.dictionary.find({}))
 # 			}
 # 	}
 # ]
-
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 db_path = os.path.join(basedir, "tes.db")
@@ -67,8 +67,9 @@ def HandleTasks():
 	res = resolve_feature(Dict[0]['dictionary'], query)
 	args = res['args']
 	mydict = {}
+	print('masuk fitur', res['id'])
 	if(res['id'] == -1):
-		return "NGGA ADA WOIIIIIIIIIII"
+		return json.dumps({'err': 'naon'})
 	if (res['id'] == 1):
 		# cek komponen task lengkap apa enggak
 		if 'jenis_task' not in args.keys():
@@ -79,7 +80,6 @@ def HandleTasks():
 			return json.dumps({'err': 'Tambahin tanggal deadline atau tanggal diadakannya dong'})
 		if 'topik' not in args:
 			return json.dumps({'err': 'Tambahin topik dong'})
-
 		# tambah task ke database
 		jumlah = users.find().count()
 		if jumlah == 0:
@@ -111,11 +111,35 @@ def HandleTasks():
 			tanggal_awal = dt.strptime(args['tanggal_awal'], DATE_FORMAT)
 			tanggal_akhir = dt.strptime(args['tanggal_akhir'], DATE_FORMAT)
 			tasks = users.find({'tanggal': {'$gte': tanggal_awal, '$lte': tanggal_akhir}}, {'_id': False})
-			print('eyeyey')
 			return json.dumps([task for task in tasks], default=str)
+		if 'n_minggu' in args:
+			# pake minggu
+			tanggal_awal = dt.now().replace(hour=0, minute=0, second=0, microsecond=0)
+			time_change = timedelta(weeks=args['n_minggu'])
+			tanggal_akhir = tanggal_awal + time_change
+			tasks = users.find({'tanggal': {'$gte': tanggal_awal, '$lte': tanggal_akhir}}, {'_id': False})
+			return json.dumps([task for task in tasks], default=str)
+		if 'n_hari' in args:
+			# pake hari
+			tanggal_awal = dt.now().replace(hour=0, minute=0, second=0, microsecond=0)
+			time_change = timedelta(days=args['n_hari'])
+			tanggal_akhir = tanggal_awal + time_change
+			print('tanggal:',tanggal_awal,tanggal_akhir)
+			tasks = users.find({'tanggal': {'$gte': tanggal_awal, '$lte': tanggal_akhir}}, {'_id': False})
+			return json.dumps([task for task in tasks], default=str)
+
 	elif(res['id'] == 3):
-		tanggal_deadline = users.find_one({"jenis_task" : res['args']['jenis_task'], "kode_matkul" : res['args']['kode_matkul']})
-		return json.dumps(tanggal_deadline['tanggal'])
+		if 'jenis_task' in args and 'kode_matkul' in args:
+			tasks = users.find({"jenis_task" : args['jenis_task'], "kode_matkul" : args['kode_matkul']}, {'_id': False})
+			return json.dumps([task for task in tasks], default=str)
+		elif 'jenis_task' in args:
+			tasks = users.find({"jenis_task" : args['jenis_task']}, {'_id': False})
+			return json.dumps([task for task in tasks], default=str)
+		elif 'kode_matkul' in args:
+			print('masuk sini')
+			tasks = users.find({"kode_matkul" : args['kode_matkul']}, {'_id': False})
+			return json.dumps([task for task in tasks], default=str)
+
 	elif(res['id'] == 4):
 		if(res['args']['tanggal'] is None):
 			return "TANGGAL NULL"
