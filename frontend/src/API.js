@@ -78,7 +78,8 @@ const API = {
             resolve(answer);
           }
           else if (data.id === 3) {
-            let answer =data.item.map( (a, i) => `${i+1}. ${a.jenis_task}-${a.kode_matkul}-${a.topik}`).join('\n');
+            let answer ="[DEADLINE]\n"+data.item.map( (a, i) => `${i+1}. ${a.jenis_task} - ${a.kode_matkul} - ${a.topik} - ${parseTanggal(a.tanggal)}`).join('\n');
+            parseTanggal(data.item[0].tanggal);
             if (data.item.length < 1) {
               answer = "Tidak ada deadline! Silahkan bermain :)"
             }
