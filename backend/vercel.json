@@ -1,7 +1,0 @@
-{
-    "name": "backend",
-    "version": 2,
-    "env": {
-      "MONGODB_URI": "mongodb+srv://dbUsers:bodoamatwoi@cluster0.wuqpo.mongodb.net/test"
-    }
-  }
